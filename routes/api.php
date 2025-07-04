@@ -10,8 +10,13 @@ use Illuminate\Support\Facades\Route;
 // Authentication routes
 Route::post('/auth/login', [AuthController::class, 'login']);
 
+// Health check route (unprotected)
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok', 'time' => now()]);
+});
+
 // Protected routes
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     // Auth routes
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/user', [AuthController::class, 'user']);
