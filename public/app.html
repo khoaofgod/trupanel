@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruPanel - Server Control Panel</title>
+    
+    <!-- Tailwind CSS + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Custom styles for TruPanel */
+        .panel-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="bg-base-200 min-h-screen">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-base-100 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="loading loading-spinner loading-lg text-primary mb-4"></div>
+            <h2 class="text-2xl font-bold text-primary">TruPanel</h2>
+            <p class="text-base-content/70">Loading server control panel...</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="hidden">
+        <!-- Authentication Layout -->
+        <div id="auth-layout" class="min-h-screen panel-gradient flex items-center justify-center p-4">
+            <div class="card w-full max-w-md bg-base-100 shadow-2xl">
+                <div class="card-body">
+                    <div class="text-center mb-6">
+                        <h1 class="text-3xl font-bold text-primary">TruPanel</h1>
+                        <p class="text-base-content/70">Server Control Panel</p>
+                    </div>
+                    
+                    <!-- Login Form -->
+                    <form id="login-form">
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text">Email</span>
+                            </label>
+                            <input type="email" id="email" placeholder="admin@trupanel.local" 
+                                   class="input input-bordered" required>
+                        </div>
+                        
+                        <div class="form-control mb-6">
+                            <label class="label">
+                                <span class="label-text">Password</span>
+                            </label>
+                            <input type="password" id="password" placeholder="••••••••" 
+                                   class="input input-bordered" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-full" id="login-btn">
+                            <span class="loading loading-spinner loading-sm hidden" id="login-spinner"></span>
+                            <i class="fas fa-sign-in-alt mr-2" id="login-icon"></i>
+                            Sign In
+                        </button>
+                    </form>
+                    
+                    <!-- Error Alert -->
+                    <div id="auth-error" class="alert alert-error mt-4 hidden">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="auth-error-message"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div id="dashboard-layout" class="hidden">
+            <!-- Navigation -->
+            <div class="navbar bg-base-100 shadow-lg">
+                <div class="navbar-start">
+                    <div class="dropdown lg:hidden">
+                        <label tabindex="0" class="btn btn-ghost">
+                            <i class="fas fa-bars text-xl"></i>
+                        </label>
+                        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                            <li><a href="#dashboard" class="nav-link"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
+                            <li><a href="#users" class="nav-link"><i class="fas fa-users mr-2"></i>System Users</a></li>
+                            <li><a href="#vhosts" class="nav-link"><i class="fas fa-globe mr-2"></i>Virtual Hosts</a></li>
+                            <li><a href="#ssl" class="nav-link"><i class="fas fa-shield-alt mr-2"></i>SSL Certificates</a></li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-ghost text-xl text-primary">
+                        <i class="fas fa-server mr-2"></i>
+                        TruPanel
+                    </a>
+                </div>
+                
+                <div class="navbar-center hidden lg:flex">
+                    <ul class="menu menu-horizontal px-1">
+                        <li><a href="#dashboard" class="nav-link"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
+                        <li><a href="#users" class="nav-link"><i class="fas fa-users mr-2"></i>System Users</a></li>
+                        <li><a href="#vhosts" class="nav-link"><i class="fas fa-globe mr-2"></i>Virtual Hosts</a></li>
+                        <li><a href="#ssl" class="nav-link"><i class="fas fa-shield-alt mr-2"></i>SSL Certificates</a></li>
+                    </ul>
+                </div>
+                
+                <div class="navbar-end">
+                    <div class="dropdown dropdown-end">
+                        <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+                            <div class="w-10 rounded-full bg-primary text-primary-content flex items-center justify-center">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </label>
+                        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                            <li><a><i class="fas fa-user mr-2"></i>Profile</a></li>
+                            <li><a><i class="fas fa-cog mr-2"></i>Settings</a></li>
+                            <li><a id="logout-btn"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="container mx-auto p-6">
+                <div id="page-content">
+                    <!-- Pages will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast toast-top toast-end z-50"></div>
+
+    <!-- Scripts -->
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/router.js"></script>
+    <script src="/assets/js/components/dashboard.js"></script>
+    <script src="/assets/js/components/users.js"></script>
+    <script src="/assets/js/components/vhosts.js"></script>
+    <script src="/assets/js/components/ssl.js"></script>
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>
