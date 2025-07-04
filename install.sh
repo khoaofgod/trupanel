@@ -15,7 +15,7 @@ set -e  # Exit on any error
 # Configuration
 TRUPANEL_VERSION="1.0.0"
 TRUPANEL_REPO="https://github.com/khoaofgod/trupanel.git"
-TRUPANEL_DIR="/var/www/trupanel"
+TRUPANEL_DIR="/root/trupanel"
 NGINX_PORT="8889"
 SSH_PORT="2214"
 ADMIN_USERNAME="admin"
@@ -244,6 +244,37 @@ install_php() {
     log_success "PHP 8.3 installed and configured"
 }
 
+configure_php_root_pool() {
+    log_info "Configuring PHP-FPM root pool for TruPanel..."
+    
+    # Create root pool configuration
+    cat > /etc/php/8.3/fpm/pool.d/root.conf << EOF
+[root]
+user = root
+group = root
+listen = /var/run/php/php8.3-fpm-root.sock
+listen.owner = root
+listen.group = root
+listen.mode = 0666
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+pm.max_requests = 500
+chdir = /root
+security.limit_extensions = .php
+php_admin_value[error_log] = /var/log/php8.3-fpm-root.log
+php_admin_flag[log_errors] = on
+php_admin_value[memory_limit] = 512M
+EOF
+
+    # Restart PHP-FPM to load new pool
+    systemctl restart php8.3-fpm >> "$LOG_FILE" 2>&1
+    
+    log_success "PHP-FPM root pool configured"
+}
+
 install_composer() {
     log_info "Installing Composer..."
     
@@ -286,8 +317,8 @@ clone_trupanel() {
     # Clone repository
     git clone "$TRUPANEL_REPO" "$TRUPANEL_DIR" >> "$LOG_FILE" 2>&1
     
-    # Set ownership
-    chown -R www-data:www-data "$TRUPANEL_DIR"
+    # Set ownership to root
+    chown -R root:root "$TRUPANEL_DIR"
     
     log_success "TruPanel repository cloned"
 }
@@ -297,8 +328,8 @@ install_trupanel_dependencies() {
     
     cd "$TRUPANEL_DIR"
     
-    # Install PHP dependencies
-    sudo -u www-data composer install --no-dev --optimize-autoloader >> "$LOG_FILE" 2>&1
+    # Install PHP dependencies as root
+    composer install --no-dev --optimize-autoloader >> "$LOG_FILE" 2>&1
     
     log_success "TruPanel dependencies installed"
 }
@@ -312,7 +343,7 @@ configure_trupanel() {
     cp .env.example .env
     
     # Generate application key
-    sudo -u www-data php artisan key:generate >> "$LOG_FILE" 2>&1
+    php artisan key:generate >> "$LOG_FILE" 2>&1
     
     # Configure environment
     sed -i "s/APP_NAME=Laravel/APP_NAME=TruPanel/" .env
@@ -325,21 +356,22 @@ configure_trupanel() {
     sed -i "s|DB_DATABASE=laravel|DB_DATABASE=${TRUPANEL_DIR}/database/database.sqlite|" .env
     
     # Create SQLite database
-    sudo -u www-data touch database/database.sqlite
-    chmod 664 database/database.sqlite
+    touch database/database.sqlite
+    chmod 600 database/database.sqlite
     
     # Run migrations
-    sudo -u www-data php artisan migrate --force >> "$LOG_FILE" 2>&1
+    php artisan migrate --force >> "$LOG_FILE" 2>&1
     
     # Create admin user
-    sudo -u www-data php artisan db:seed >> "$LOG_FILE" 2>&1
+    php artisan db:seed >> "$LOG_FILE" 2>&1
     
-    # Set proper permissions
-    chown -R www-data:www-data "$TRUPANEL_DIR"
+    # Set proper permissions for root
+    chown -R root:root "$TRUPANEL_DIR"
     find "$TRUPANEL_DIR" -type f -exec chmod 644 {} \;
     find "$TRUPANEL_DIR" -type d -exec chmod 755 {} \;
-    chmod -R 775 "$TRUPANEL_DIR/storage"
-    chmod -R 775 "$TRUPANEL_DIR/bootstrap/cache"
+    chmod -R 700 "$TRUPANEL_DIR/storage"
+    chmod -R 700 "$TRUPANEL_DIR/bootstrap/cache"
+    chmod 600 "$TRUPANEL_DIR/database/database.sqlite"
     
     log_success "TruPanel configured"
 }
@@ -372,7 +404,7 @@ server {
     }
 
     location ~ \.php\$ {
-        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm-root.sock;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
         include fastcgi_params;
@@ -512,7 +544,7 @@ create_management_scripts() {
 #!/bin/bash
 # TruPanel Management Script
 
-TRUPANEL_DIR="/var/www/trupanel"
+TRUPANEL_DIR="/root/trupanel"
 
 case "$1" in
     status)
@@ -595,6 +627,7 @@ main() {
     install_dependencies
     install_nginx
     install_php
+    configure_php_root_pool
     install_composer
     install_certbot
     install_nodejs

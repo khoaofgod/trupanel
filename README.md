@@ -53,6 +53,15 @@ http://YOUR_SERVER_IP:8889/
 
 ⚠️ **IMPORTANT**: Change the default password immediately after first login!
 
+### 🔐 Security Architecture
+
+TruPanel runs as root to perform system administration tasks (creating users, managing nginx, SSL certificates). This is necessary for a server control panel but requires secure deployment:
+
+- Installed in `/root/trupanel/` (only accessible by root)
+- Uses dedicated PHP-FPM pool running as root
+- All system operations properly validated and secured
+- Only accessible via control panel interface on port 8889
+
 ## 🛠️ Management Commands
 
 TruPanel includes a management script for common operations:
@@ -88,7 +97,9 @@ curl -X POST http://YOUR_SERVER_IP:8889/api/auth/login \
 
 ## 🔒 Security Features
 
+- **Root Execution**: TruPanel runs as root to perform system administration tasks
 - **User Isolation**: Each virtual host runs under its own Linux user
+- **Secure Installation**: Installed in `/root/trupanel/` with restricted access
 - **Secure SSH**: SSH port changed to 2214, root login disabled
 - **Firewall**: UFW configured with minimal required ports
 - **SSL/TLS**: Let's Encrypt integration with auto-renewal
