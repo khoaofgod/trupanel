@@ -1,108 +1,61 @@
-# TruPanel - Open Source Server Control Panel
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PHP Version](https://img.shields.io/badge/PHP-8.3-blue.svg)](https://www.php.net)
-[![Laravel](https://img.shields.io/badge/Laravel-10.x-red.svg)](https://laravel.com)
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-TruPanel is a modern, open-source server control panel for Ubuntu that simplifies the management of web hosting environments. Built with an API-first architecture, it provides a clean separation between backend and frontend, making it easy to extend and customize.
+## About Laravel
 
-## 🚀 Features
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- **User Management**: Create and manage Linux system users with SSH access control
-- **Virtual Host Management**: Easy nginx configuration with per-user isolation
-- **SSL Certificates**: Automated Let's Encrypt integration
-- **API-First Architecture**: RESTful API with token authentication
-- **Modern UI**: Responsive design with DaisyUI components
-- **Security Focused**: Encrypted passwords, user isolation, and secure defaults
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-## 📋 Requirements
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-- Ubuntu 22.04 or 24.04 LTS
-- Root access
-- Minimum 1GB RAM
-- 10GB available disk space
-- Domain name (for SSL certificates)
+## Learning Laravel
 
-## 🔧 Quick Installation
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-```bash
-curl -sL https://raw.githubusercontent.com/khoaofgod/trupanel/main/install.sh | sudo bash
-```
+You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-After installation:
-- Access URL: `http://your-server-ip:8889`
-- Default login: `admin` / `admin12345`
-- **⚠️ Change the default password immediately!**
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## 🏗️ Architecture
+## Laravel Sponsors
 
-TruPanel follows a strict API-first architecture:
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-- **Backend**: Laravel 10.x REST API
-- **Frontend**: Vanilla JavaScript SPA
-- **Database**: SQLite with encrypted passwords
-- **Web Server**: Nginx with PHP-FPM 8.3
-- **SSL**: Let's Encrypt with auto-renewal
+### Premium Partners
 
-## 🔒 Security
+- **[Vehikl](https://vehikl.com)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Redberry](https://redberry.international/laravel-development)**
+- **[Active Logic](https://activelogic.com)**
 
-TruPanel is designed with security in mind:
+## Contributing
 
-- All passwords are bcrypt encrypted
-- Each virtual host runs under its own Linux user
-- Automatic firewall configuration
-- Rate limiting on API endpoints
-- CSRF and XSS protection
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## 📖 Documentation
+## Code of Conduct
 
-- [Installation Guide](docs/installation.md)
-- [API Documentation](docs/api.md)
-- [Security Best Practices](SECURITY.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## 🤝 Contributing
+## Security Vulnerabilities
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-### Development Setup
+## License
 
-```bash
-# Clone the repository
-git clone https://github.com/khoaofgod/trupanel.git
-cd trupanel
-
-# Install dependencies
-composer install
-npm install
-
-# Set up environment
-cp .env.example .env
-php artisan key:generate
-
-# Run development servers
-php artisan serve --port=8889
-npm run dev
-```
-
-## 🐛 Bug Reports
-
-Found a bug? Please open an issue on our [GitHub Issues](https://github.com/khoaofgod/trupanel/issues) page.
-
-For security vulnerabilities, please email khoaofgod@gmail.com directly.
-
-## 📄 License
-
-TruPanel is open-source software licensed under the [MIT license](LICENSE).
-
-## 🙏 Acknowledgments
-
-Built with:
-- [Laravel](https://laravel.com)
-- [DaisyUI](https://daisyui.com)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Let's Encrypt](https://letsencrypt.org)
-
----
-
-Made with ❤️ by [khoaofgod](https://github.com/khoaofgod)
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
