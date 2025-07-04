@@ -44,7 +44,7 @@ curl -sL https://raw.githubusercontent.com/khoaofgod/trupanel/main/install.sh | 
 
 After installation, access your control panel at:
 ```
-http://YOUR_SERVER_IP:8889/app.html
+http://YOUR_SERVER_IP:8889/
 ```
 
 **Default Credentials:**
@@ -81,7 +81,7 @@ TruPanel provides a comprehensive REST API for all operations:
 ### Authentication
 ```bash
 # Login
-curl -X POST http://localhost:8889/api/auth/login \
+curl -X POST http://YOUR_SERVER_IP:8889/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@trupanel.local","password":"admin12345"}'
 ```

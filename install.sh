@@ -71,7 +71,7 @@ print_footer() {
     echo "  TruPanel Installation Complete!"
     echo "======================================================================="
     echo
-    echo "  🌐 Control Panel: http://$(hostname -I | awk '{print $1}'):${NGINX_PORT}/app.html"
+    echo "  🌐 Control Panel: http://$(hostname -I | awk '{print $1}'):${NGINX_PORT}/"
     echo "  📧 Username: ${ADMIN_USERNAME}"
     echo "  🔑 Password: ${ADMIN_PASSWORD}"
     echo "  🔒 SSH Port: ${SSH_PORT}"
